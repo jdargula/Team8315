@@ -18,4 +18,6 @@ public class RestController {
         return "hello " + name;
     }
 
+    @GetMapping("/atlanta")
+    String atlanta() { return "atlanta"; }
 }
