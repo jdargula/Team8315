@@ -13,7 +13,7 @@ public class RestController {
         return "hello";
     }
 
-    @PostMapping("/hello/{name}")
+    @PostMapping("/hello")
     String helloName(@RequestBody String name) {
         return "hello " + name;
     }
