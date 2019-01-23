@@ -22,12 +22,6 @@ public class RestController {
         //Establish Connection to Database
         database_connection.connect();
 
-        //Create Tables
-        database_connection.createTables();
-
-        //Adding Test Entry
-        database_connection.testAddEntry();
-
         //Count Entrees
         database_connection.countEntres();
 
@@ -39,6 +33,11 @@ public class RestController {
     @PostMapping("/hello")
     String helloName(@RequestBody String name) {
         return "hello " + name;
+    }
+
+    @PostMapping("/AirportCode")
+    String airportcodestring(@RequestBody String AirportCode) {
+        return "hello this is a work in progress";
     }
 
     @GetMapping("/atlanta")
