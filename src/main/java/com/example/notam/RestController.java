@@ -1,6 +1,7 @@
 package com.example.notam;
 
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,8 +36,9 @@ public class RestController {
         return "hello " + name;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/AirportCode")
-    String airportcodestring(@RequestBody String AirportCode) {
+    NotamModel airportcodestring(@RequestBody String AirportCode) {
         //Creating initial database_connection
         Database_Layout_Manager database_connection =  new Database_Layout_Manager();
 
@@ -44,7 +46,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        String results = database_connection.testGetEntree(AirportCode);
+        NotamModel results = database_connection.testGetEntry(AirportCode);
 
         //Disconnect from Database
         database_connection.disconnect();
