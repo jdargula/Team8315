@@ -169,7 +169,7 @@ public class Database_Layout_Manager extends Database_Connection {
 
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Cordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams WHERE Airport = " +airportCode);
+                    " FROM notams WHERE Airport = '" +airportCode+ "'");
             if(rs.next())
                 return new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
                     rs.getString(4), rs.getString(5), rs.getString(6),
