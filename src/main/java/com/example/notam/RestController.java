@@ -53,6 +53,23 @@ public class RestController {
         return results;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/RawNotamFromKey")
+    String rawnotamstring(@RequestBody String NotamKey) {
+        //Creating initial database_connection
+        Database_Layout_Manager database_connection =  new Database_Layout_Manager();
+
+        //Establish Connection to Database
+        database_connection.connect();
+
+        //Getting String Value from Matching Notams
+        String results = database_connection.testGetRaw(NotamKey);
+
+        //Disconnect from Database
+        database_connection.disconnect();
+        return results;
+    }
+
     @GetMapping("/atlanta")
     String atlanta() { return "atlanta"; }
 }

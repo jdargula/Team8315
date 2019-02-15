@@ -180,4 +180,18 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
+    public String testGetRaw(String key){
+        try {
+
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT raw_notam" +
+                    " FROM notams WHERE NOTAM_key = '" +key+ "'");
+            if(rs.next())
+                return rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
