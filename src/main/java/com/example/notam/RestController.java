@@ -55,7 +55,7 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/AirportCodeMultiple")
-    NotamModel[] airportcodemultiplestring(@RequestBody String AirportCode) {
+    Object[] airportcodemultiplestring(@RequestBody String AirportCode) {
         //Creating initial database_connection
         Database_Layout_Manager database_connection =  new Database_Layout_Manager();
 
@@ -63,7 +63,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        NotamModel[] results = database_connection.testGetMultipleEntries(AirportCode);
+        Object[] results = database_connection.testGetMultipleEntries(AirportCode);
 
         //Disconnect from Database
         database_connection.disconnect();
