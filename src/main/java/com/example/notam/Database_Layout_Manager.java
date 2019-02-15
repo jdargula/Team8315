@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Database_Layout_Manager extends Database_Connection {
 
@@ -174,6 +175,24 @@ public class Database_Layout_Manager extends Database_Connection {
                 return new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
                     rs.getString(4), rs.getString(5), rs.getString(6),
                     rs.getString(7), rs.getString(8), rs.getString(9));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public NotamModel[] testGetMultipleEntries(String airportCode){
+        try {
+
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Cordinates,Altitude,Runway,Effective_Time,Created,Source" +
+                    " FROM notams WHERE Airport = '" +airportCode+ "'");
+            ArrayList<NotamModel> multipleArrayList = new ArrayList<NotamModel>();
+            while(rs.next())
+                multipleArrayList.add(new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getString(9)));
+            return (NotamModel[]) (multipleArrayList.toArray());
         } catch (SQLException e) {
             e.printStackTrace();
         }
