@@ -80,7 +80,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        String results = database_connection.testGetRaw(NotamKey);
+        String results = database_connection.testGetRaw(NotamKey.toUpperCase());
 
         //Disconnect from Database
         database_connection.disconnect();
