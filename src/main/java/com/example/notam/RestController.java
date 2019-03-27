@@ -88,20 +88,22 @@ public class RestController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/LongandLatfromCoord")
-    String[] coordinatesToLongANDLat(@RequestBody String s) {
-            String[] coordinates = new String[2];
-            int i = 0;
-            boolean boo = true;
-            while(i < s.length() && boo) {
-                if (s.charAt(i)=='N' || s.charAt(i)=='S') {
-                    coordinates[0] = s.substring(0, i + 1);
-                    coordinates[1] = s.substring(i + 1, s.length());
-                }
-                i+=1;
-            }
-            return coordinates;
-        }
+    @PostMapping("/LongandLatfromCoords")
+    Object[] longAndLatFromCoords(@RequestBody String airportCode) {
+        //Creating initial database_connection
+        Database_Layout_Manager database_connection =  new Database_Layout_Manager();
+
+        //Establish Connection to Database
+        database_connection.connect();
+
+        //Getting String Value from Matching Notams
+        Object[] results = database_connection.testUpdateMap(airportCode.toUpperCase());
+
+        //Disconnect from Database
+        database_connection.disconnect();
+        return results;
+    }
+
 
 
     @GetMapping("/atlanta")
