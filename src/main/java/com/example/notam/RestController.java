@@ -89,7 +89,7 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/LongandLatfromCoords")
-    Object[] longAndLatFromCoords(@RequestBody String airportCode) {
+    Object longAndLatFromCoords(@RequestBody Object coordinates) {
         //Creating initial database_connection
         Database_Layout_Manager database_connection =  new Database_Layout_Manager();
 
@@ -97,14 +97,12 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        Object[] results = database_connection.testUpdateMap(airportCode.toUpperCase());
+        Object results = database_connection.testUpdateMap(coordinates);
 
         //Disconnect from Database
         database_connection.disconnect();
         return results;
     }
-
-
 
     @GetMapping("/atlanta")
     String atlanta() { return "atlanta"; }

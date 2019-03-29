@@ -15,7 +15,7 @@ public class Database_Layout_Manager extends Database_Connection {
                     "NOTAM_key VARCHAR(100) PRIMARY KEY NOT NULL, " +
                     "Airport VARCHAR(4) NOT NULL," +
                     "Type VARCHAR(100) NOT NULL, " +
-                    "Coordinates VARCHAR(100)," +
+                    "Coordinates ARRAY(100)," +
                     "Altitude VARCHAR(100)," +
                     "Runway VARCHAR(100)," +
                     "Effective_Time VARCHAR(100)," +
@@ -181,31 +181,25 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    public String[] testUpdateMap(String airportCode) {
-        String[] coordinates = null;
+    public Object testUpdateMap(Object coordinates) {
+        Object coordinatesAsArray;
         try {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams WHERE Airport = '" + airportCode + "'");
-            if (rs.next())
-                coordinates = new String[2];
-                int i = 0;
-                String s = rs.getString(4);
-                while (i < s.length()) {
-                    if (s.charAt(i) == 'N' || s.charAt(i) == 'S') {
-                        coordinates[0] = s.substring(0, i + 1);
-                        coordinates[1] = s.substring(i + 1);
-                    }
-                    i += 1;
-                }
-                return coordinates;
+            ResultSet rs = st.executeQuery(
+                    "SELECT " +
+                            "Coordinates," +
+                    " FROM notams WHERE Coordinates = '" + coordinates + "'");
+            if (rs.next()) {
+                coordinatesAsArray = rs.getString(1);
+                return coordinatesAsArray;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Object[] testGetMultipleEntries(String airportCode){
+    public Object[] testGetMultipleEntries(String airportCode) {
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
