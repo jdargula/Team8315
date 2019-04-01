@@ -15,7 +15,7 @@ public class Database_Layout_Manager extends Database_Connection {
                     "NOTAM_key VARCHAR(100) PRIMARY KEY NOT NULL, " +
                     "Airport VARCHAR(4) NOT NULL," +
                     "Type VARCHAR(100) NOT NULL, " +
-                    "Coordinates ARRAY(100)," +
+                    "Coordinates VARCHAR(100)," +
                     "Altitude VARCHAR(100)," +
                     "Runway VARCHAR(100)," +
                     "Effective_Time VARCHAR(100)," +
@@ -181,18 +181,30 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    public Object testUpdateMap(Object coordinates) {
-        Object coordinatesAsArray;
+    public Object[] testUpdateMap(String airportCode) {
+        Object[] latAndLong = new Object[2];
+        // Code to use for testing until coordinates are reformatted
+        // in db.
+        // START of code to be removed //
+
+        int i = 0;
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
                     "SELECT " +
-                            "Coordinates," +
-                    " FROM notams WHERE Coordinates = '" + coordinates + "'");
-            if (rs.next()) {
-                coordinatesAsArray = rs.getString(1);
-                return coordinatesAsArray;
+                            "coordinates," +
+                            " FROM notams WHERE airport = '" + airportCode + "'");
+            Object[] coordinatesATL = {33.6407, -84.4277};//currently hardcoded
+            Object[] coordinatesJFK = {40.6413, -73.7781};//hardcoded
+            if (airportCode.equals("JFK")) {
+                return coordinatesJFK;
             }
+            return coordinatesATL;
+            /*latAndLong = new Object[rs.getFetchSize()];
+            while (rs.next()) {
+                latAndLong[++i] = rs.getString(4);
+                return latAndLong;
+            }*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
