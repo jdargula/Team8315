@@ -1,4 +1,6 @@
 package com.example.notam;
+import org.springframework.boot.jackson.JsonComponent;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
