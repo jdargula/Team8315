@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Database_Layout_Manager extends Database_Connection {
 
@@ -164,47 +165,89 @@ public class Database_Layout_Manager extends Database_Connection {
         }
         return toreturn;
     }
-
-    public NotamModel testGetEntry(String airportCode){
+    /*
+     * Passes in a single airport code (first notam selected in db),
+     * then returns varchar object for postmapping (to be stringified
+     * in method that includes a call to http post that has corresponding
+     * body request).
+     */
+    public Object getAirportCoordinates(String airportCode){
         try {
-
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
+            ResultSet rs = st.executeQuery(
+                    "SELECT NOTAM_key," +
+                            "Airport," +
+                            "Type," +
+                            "Coordinates," +
+                            "Altitude," +
+                            "Runway," +
+                            "Effective_Time," +
+                            "Created," +
+                            "Source" +
                     " FROM notams WHERE Airport = '" +airportCode+ "'");
-            if(rs.next())
-                return new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
-                    rs.getString(4), rs.getString(5), rs.getString(6),
-                    rs.getString(7), rs.getString(8), rs.getString(9));
+            if (rs.next()) {
+                return rs.getString(4);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Object[] testUpdateMap(String airportCode) {
-        Object[] latAndLong = new Object[2];
-        // Code to use for testing until coordinates are reformatted
-        // in db.
-        // START of code to be removed //
+    // No implementation in front end at the moment.
+    // Lat and Long in db entries for ATL and JFK NOTAMS, are now
+    // in a format that can be easily stringified into a JSON string by
+    // frontend code.
+    public ArrayList<Object> getAllAirportCoordinates(Object[] airportCodes) {
+        ArrayList<Object> airportCodeList = new ArrayList<>();
+        int i = airportCodes.length - 1;
+        int j = -1;
+        while (i > -1) {
+            try {
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(
+                        "SELECT NOTAM_key," +
+                                "Airport," +
+                                "Type," +
+                                "Coordinates," +
+                                "Altitude," +
+                                "Runway," +
+                                "Effective_Time," +
+                                "Created," +
+                                "Source" +
+                                " FROM notams WHERE Airport = '" + airportCodes[++j] + "'");
+                while (rs.next()) {
+                    // Will add to a list of objects that can be
+                    // iteratively stringified by frontend code.
+                    airportCodeList.add(rs.getString(4));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            ++i;
+        }
+        return airportCodeList;
+    }
 
-        int i = 0;
+    public NotamModel testGetEntry(String airportCode){
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
-                    "SELECT " +
-                            "coordinates," +
-                            " FROM notams WHERE airport = '" + airportCode + "'");
-            Object[] coordinatesATL = {33.6407, -84.4277};//currently hardcoded
-            Object[] coordinatesJFK = {40.6413, -73.7781};//hardcoded
-            if (airportCode.equals("JFK")) {
-                return coordinatesJFK;
+                    "SELECT NOTAM_key," +
+                            "Airport," +
+                            "Type," +
+                            "Coordinates," +
+                            "Altitude," +
+                            "Runway," +
+                            "Effective_Time," +
+                            "Created," +
+                            "Source" +
+                            " FROM notams WHERE Airport = '" +airportCode+ "'");
+            if(rs.next()) {
+                return new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getString(9));
             }
-            return coordinatesATL;
-            /*latAndLong = new Object[rs.getFetchSize()];
-            while (rs.next()) {
-                latAndLong[++i] = rs.getString(4);
-                return latAndLong;
-            }*/
         } catch (SQLException e) {
             e.printStackTrace();
         }

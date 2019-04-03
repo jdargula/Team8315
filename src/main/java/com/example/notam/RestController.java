@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @org.springframework.web.bind.annotation.RestController
 public class RestController {
 
@@ -89,15 +92,32 @@ public class RestController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/LongandLatfromCoords")
-    Object[] longAndLatFromCoords(@RequestBody String AirportCode) {
+    Object longAndLatFromCoords(@RequestBody String AirportCode) {
         //Creating initial database_connection
-        Database_Layout_Manager database_connection =  new Database_Layout_Manager();
+        Database_Layout_Manager database_connection = new Database_Layout_Manager();
 
         //Establish Connection to Database
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        Object[] results = database_connection.testUpdateMap(AirportCode);
+        Object results = database_connection.getAirportCoordinates(AirportCode);
+
+        //Disconnect from Database
+        database_connection.disconnect();
+        return results;
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/AllCoords")
+    ArrayList<Object> getAllCoords(@RequestBody Object[] airportCodes) {
+        //Creating initial database_connection
+        Database_Layout_Manager database_connection = new Database_Layout_Manager();
+
+        //Establish Connection to Database
+        database_connection.connect();
+        // results are arraylist of airport coordinates in JSON string format
+        ArrayList<Object> results;
+        results = database_connection.getAllAirportCoordinates(airportCodes);
 
         //Disconnect from Database
         database_connection.disconnect();
