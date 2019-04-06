@@ -1,11 +1,14 @@
 package com.example.notam;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,10 +104,11 @@ public class RestController {
 
         //Getting String Value from Matching Notams
         Object results = database_connection.getAirportCoordinates(AirportCode);
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        Coords coords = new Coords(33.3333, -84.4444);
         //Disconnect from Database
         database_connection.disconnect();
-        return results;
+        return coords;
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
