@@ -1,22 +1,22 @@
 package com.example.notam;
 
 public class Coords {
-    private Object lat;
-    private Object lng;
-    Coords(Object lat, Object lng) {
+    private Double lat;
+    private Double lng;
+    Coords(Double lat, Double lng) {
         this.lat = lat;
         this.lng = lng;
     }
-    void setLat(Object lat) {
+    void setLat(Double lat) {
         this.lat = lat;
     }
-    Object getLat() {
+    Double getLat() {
         return lat;
     }
-    void setLng(Object lng) {
+    void setLng(Double lng) {
         this.lng = lng;
     }
-    Object getLng() {
+    Double getLng() {
         return lng;
     }
 }
