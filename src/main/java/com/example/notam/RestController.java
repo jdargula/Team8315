@@ -72,7 +72,7 @@ public class RestController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/AirportCodeALL")
+    @PostMapping("/GetAllNotams")
     Object[] getAllNotamsInDatabase() {
         //Creating initial database_connection
         Database_Layout_Manager database_connection =  new Database_Layout_Manager();
@@ -122,8 +122,8 @@ public class RestController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping("/AllCoords")
-    ArrayList<Object> getAllCoords(@RequestBody Object[] airportCodes) {
+    @PostMapping("/AllNotamCoords")
+    ArrayList<Object> getAllNotamCoords(@RequestBody Object[] airportCodes) {
         //Creating initial database_connection
         Database_Layout_Manager database_connection = new Database_Layout_Manager();
 

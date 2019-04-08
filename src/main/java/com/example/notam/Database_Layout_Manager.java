@@ -224,10 +224,15 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    // No implementation in front end at the moment.
-    // Lat and Long in db entries for ATL and JFK NOTAMS, are now
-    // in a format that can be easily stringified into a JSON string by
-    // frontend code.
+    /**
+     *
+     * @param airportCodes array of airportCodes for all notam entries.
+     * @return ArrayList<Object> of all notam airport codes,
+     * including duplicate airport code associated instances.
+     * (i.e., notam having the same airport code as a different
+     * notam in our database. Each notam has a unique key
+     * for identification in our db, in the form of a notam key.
+     */
     public ArrayList<Object> getAllAirportCoordinates(Object[] airportCodes) {
         ArrayList<Object> airportCodeList = new ArrayList<>();
         int i = airportCodes.length - 1;
@@ -247,16 +252,15 @@ public class Database_Layout_Manager extends Database_Connection {
                                 "Source" +
                                 " FROM notams WHERE Airport = '" + airportCodes[++j] + "'");
                 while (rs.next()) {
-                    // Will add to a list of objects that can be
-                    // iteratively stringified by frontend code.
                     airportCodeList.add(rs.getString(4));
                 }
+                return airportCodeList;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            ++i;
+            --i;
         }
-        return airportCodeList;
+        return null;
     }
 
     public NotamModel testGetEntry(String airportCode){
