@@ -50,7 +50,7 @@ public class Database_Layout_Manager extends Database_Connection {
                             "raw_NOTAM)" +
                             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             st.setString(1,"11/330");
-            st.setString(2,"ATL");
+            st.setString(2,"!ATL");
             st.setString(3,"OBST TOWER OUT OF SERVICE");
             st.setString(4,"333332.90N0841407.20W");
             st.setString(5,"1067.3FT (260.2FT AGL)");
@@ -84,7 +84,7 @@ public class Database_Layout_Manager extends Database_Connection {
                             "raw_NOTAM)" +
                             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             st.setString(1,"11/371");
-            st.setString(2,"ATL");
+            st.setString(2,"!ATL");
             st.setString(3,"RWY CLSD");
             st.setString(4,null);
             st.setString(5,null);
@@ -117,7 +117,7 @@ public class Database_Layout_Manager extends Database_Connection {
                             "raw_NOTAM)" +
                             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             st.setString(1,"11/373");
-            st.setString(2,"JFK");
+            st.setString(2,"!JFK");
             st.setString(3,"RWY CLSD");
             st.setString(4,null);
             st.setString(5,null);
@@ -155,7 +155,7 @@ public class Database_Layout_Manager extends Database_Connection {
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams WHERE Airport = 'ATL'");
+                    " FROM notams WHERE Airport = '!ATL'");
             while(rs.next()){
                 for(int i = 1; i < 9; i++) {
                     toreturn = toreturn + rs.getString(i) + "$";

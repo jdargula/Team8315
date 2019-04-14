@@ -32,6 +32,9 @@ public class RestController {
         //Count Entrees
         database_connection.countEntres();
 
+        database_connection.testAddEntry2();
+        database_connection.testAddEntry3();
+
         //Disconnect from Database
         database_connection.disconnect();
         return "Tested_database";
