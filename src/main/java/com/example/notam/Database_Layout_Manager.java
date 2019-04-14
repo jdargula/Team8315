@@ -1,4 +1,6 @@
 package com.example.notam;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.jackson.JsonComponent;
 
 import java.sql.PreparedStatement;
@@ -167,13 +169,24 @@ public class Database_Layout_Manager extends Database_Connection {
         }
         return toreturn;
     }
-    /*
-     * Passes in a single airport code (first notam selected in db),
-     * then returns varchar object for postmapping (to be stringified
-     * in method that includes a call to http post that has corresponding
-     * body request).
+    /**
+     * Passes in a single airport code input by a user,
+     * returning a String for postmapping.
+     *
+     * Lat and lng property:value mapping is formatted
+     * into a JSON string, to be consumed by our frontend code using
+     * JSON.parse(JSON_String). The JSON.parse method is inside of
+     * the function invoking a method in our rest controller.
+     *
+     * The function invoking the request handler in our rest api,
+     * invokes that request handler with a call to http post which
+     * includes parameters corresponding to the postmapping and
+     * body request tags of that http-post request handler.
+     *
+     * @param airportCode
+     * @return coordinates in a JSON-stringified format
      */
-    public Object getAirportCoordinates(String airportCode){
+    public String getAirportCoordinates(String airportCode){
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
@@ -188,7 +201,22 @@ public class Database_Layout_Manager extends Database_Connection {
                             "Source" +
                     " FROM notams WHERE Airport = '" +airportCode+ "'");
             if (rs.next()) {
-                return rs.getString(4);
+                // return rs.getString(4);
+                ObjectMapper objectMapper = new ObjectMapper();
+                Coords coords = new Coords(null, null);
+                coords.setLat(33.3333);
+                coords.setLng(-84.4444);
+                double lat = coords.getLat();
+                double lng = coords.getLng();
+                String coordsAsString;
+                try {
+                    coordsAsString = objectMapper.writeValueAsString(coords);
+                } catch (JsonProcessingException e) {
+                    System.out.println("Lat and Lng data not convertible to JSON");
+                    coordsAsString = "{ \"lat\" : " + lat + ", \"lng\" : " + lng + " }";
+                    System.out.println("coordsAsString = " + coordsAsString);
+                }
+                return coordsAsString;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -196,10 +224,15 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    // No implementation in front end at the moment.
-    // Lat and Long in db entries for ATL and JFK NOTAMS, are now
-    // in a format that can be easily stringified into a JSON string by
-    // frontend code.
+    /**
+     *
+     * @param airportCodes array of airportCodes for all notam entries.
+     * @return ArrayList<Object> of all notam airport codes,
+     * including duplicate airport code associated instances.
+     * (i.e., notam having the same airport code as a different
+     * notam in our database. Each notam has a unique key
+     * for identification in our db, in the form of a notam key.
+     */
     public ArrayList<Object> getAllAirportCoordinates(Object[] airportCodes) {
         ArrayList<Object> airportCodeList = new ArrayList<>();
         int i = airportCodes.length - 1;
@@ -219,16 +252,15 @@ public class Database_Layout_Manager extends Database_Connection {
                                 "Source" +
                                 " FROM notams WHERE Airport = '" + airportCodes[++j] + "'");
                 while (rs.next()) {
-                    // Will add to a list of objects that can be
-                    // iteratively stringified by frontend code.
                     airportCodeList.add(rs.getString(4));
                 }
+                return airportCodeList;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            ++i;
+            --i;
         }
-        return airportCodeList;
+        return null;
     }
 
     public NotamModel testGetEntry(String airportCode){
@@ -261,6 +293,23 @@ public class Database_Layout_Manager extends Database_Connection {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
                     " FROM notams WHERE Airport = '" +airportCode+ "'");
+            ArrayList<NotamModel> multipleArrayList = new ArrayList<NotamModel>();
+            while(rs.next())
+                multipleArrayList.add(new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
+                        rs.getString(4), rs.getString(5), rs.getString(6),
+                        rs.getString(7), rs.getString(8), rs.getString(9)));
+            return multipleArrayList.toArray();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object[] getAllNotams() {
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
+                    " FROM notams ");
             ArrayList<NotamModel> multipleArrayList = new ArrayList<NotamModel>();
             while(rs.next())
                 multipleArrayList.add(new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
