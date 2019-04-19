@@ -25,7 +25,7 @@ public class RestController {
         database_connection.connect();
 
         //Count Entrees
-        database_connection.countEntres();
+        database_connection.countNumEntries();
 
         //Disconnect from Database
         database_connection.disconnect();
@@ -47,7 +47,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        NotamModel results = database_connection.testGetEntry(AirportCode);
+        NotamModel results = database_connection.getEntry(AirportCode);
 
         //Disconnect from Database
         database_connection.disconnect();
@@ -64,7 +64,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        Object[] results = database_connection.testGetMultipleEntries(AirportCode);
+        Object[] results = database_connection.getMultipleEntries(AirportCode);
 
         //Disconnect from Database
         database_connection.disconnect();
@@ -98,7 +98,7 @@ public class RestController {
         database_connection.connect();
 
         //Getting String Value from Matching Notams
-        String results = database_connection.testGetRaw(NotamKey.toUpperCase());
+        String results = database_connection.getRawNotamData(NotamKey.toUpperCase());
 
         //Disconnect from Database
         database_connection.disconnect();

@@ -1,21 +1,18 @@
 package com.example.notam;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.jackson.JsonComponent;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Database_Layout_Manager extends Database_Connection {
 
     public void createTables(){
         try{
             stmt = conn.createStatement();
-            //this is the columns of the table
             String sql = "CREATE TABLE IF NOT EXISTS notams (" +
                     "NOTAM_key VARCHAR(100) PRIMARY KEY NOT NULL, " +
                     "Airport VARCHAR(4) NOT NULL," +
@@ -36,7 +33,7 @@ public class Database_Layout_Manager extends Database_Connection {
         }
     }
 
-    public void testAddEntry1(){
+    public void testAddEntryOne(){
         try{
             PreparedStatement st = conn.prepareStatement(
                     "INSERT INTO NOTAMS " +
@@ -60,8 +57,10 @@ public class Database_Layout_Manager extends Database_Connection {
             st.setString(7,"1811231352-181223135");
             st.setString(8,"23 Nov 2018 13:52:00");
             st.setString(9,"ATL");
-            st.setString(10,"!ATL 11/330 ATL OBST TOWER LGT (ASR 1021647) 333332.90N0841407.20W " +
-                    "(10.6NM ESE ATL) 1067.3FT (260.2FT AGL) OUT OF SERVICE 1811231352-1812231352 " +
+            st.setString(10,"!ATL 11/330 ATL OBST TOWER " +
+                    "LGT (ASR 1021647) 333332.90N0841407.20W " +
+                    "(10.6NM ESE ATL) 1067.3FT (260.2FT AGL) " +
+                    "OUT OF SERVICE 1811231352-1812231352 " +
                     "CREATED: 23 Nov 2018 13:52:00 SOURCE: ATL");
             st.executeUpdate();
             st.close();
@@ -70,7 +69,7 @@ public class Database_Layout_Manager extends Database_Connection {
         }
     }
 
-    public void testAddEntry2(){
+    public void testAddEntryTwo(){
         try {
             PreparedStatement st = conn.prepareStatement(
                     "INSERT INTO NOTAMS " +
@@ -94,8 +93,10 @@ public class Database_Layout_Manager extends Database_Connection {
             st.setString(7,"1811280500-181128113");
             st.setString(8,"27 Nov 2018 17:13:00");
             st.setString(9,"ATL");
-            st.setString(10,"!ATL 11/368 ATL TWY N2 SFC PAINTED HLDG PSN SIGNS OBSC " +
-                    "1811271138-1812031130 CREATED: 27 Nov 2018 11:38:00 SOURCE: ATL");
+            st.setString(10,"!ATL 11/368 ATL TWY N2" +
+                    " SFC PAINTED HLDG PSN SIGNS OBSC " +
+                    "1811271138-1812031130 CREATED: " +
+                    "27 Nov 2018 11:38:00 SOURCE: ATL");
             st.executeUpdate();
             st.close();
         } catch(SQLException e) {
@@ -103,7 +104,7 @@ public class Database_Layout_Manager extends Database_Connection {
         }
     }
 
-    public void testAddEntry3(){
+    public void testAddEntryThree(){
         try {
             PreparedStatement st = conn.prepareStatement(
                     "INSERT INTO NOTAMS " +
@@ -126,9 +127,11 @@ public class Database_Layout_Manager extends Database_Connection {
             st.setString(6, "09R/27L");
             st.setString(7,"1811280500-181128113");
             st.setString(8,"27 Nov 2018 17:13:00");
-            st.setString(9,"ATL");
-            st.setString(10,"!ATL 11/368 ATL TWY N2 SFC PAINTED HLDG PSN SIGNS OBSC " +
-                    "1811271138-1812031130 CREATED: 27 Nov 2018 11:38:00 SOURCE: ATL");
+            st.setString(9,"JFK");
+            st.setString(10,"!JFK 11/368 ATL TWY N2 " +
+                    "SFC PAINTED HLDG PSN SIGNS OBSC " +
+                    "1811271138-1812031130 CREATED:" +
+                    " 27 Nov 2018 11:38:00 SOURCE: JFK");
             st.executeUpdate();
             st.close();
         } catch(SQLException e) {
@@ -136,11 +139,17 @@ public class Database_Layout_Manager extends Database_Connection {
         }
     }
 
-    public void countEntres(){
+    /**
+     * Counts the number of notams by number of row entries in db.
+     * Prints notam count.
+     * For testing.
+     */
+    public void countNumEntries(){
         int number_of_rows = -1;
         try{
             PreparedStatement st = conn.prepareStatement(
-                    "SELECT count(*) FROM notams");
+                    "SELECT count(*) " +
+                            "FROM notams");
             ResultSet rs = st.executeQuery();
             while(rs.next()) {
                 number_of_rows = rs.getInt(1);
@@ -152,22 +161,39 @@ public class Database_Layout_Manager extends Database_Connection {
         }
     }
 
-    public String testGetEntree(String airportcode){
-        String toreturn = "";
+    /**
+     *
+     * @param airportCode the airport code associated with the airport that
+     *                    the user has input and submitted to conduct
+     *                    a notam search query.
+     * @return query result of user's notam search by airport code.
+     */
+    public String testGetEntry(String airportCode){
+        String toReturn = "";
         try {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams WHERE Airport = 'ATL'");
+            ResultSet rs = st.executeQuery(
+                    "SELECT NOTAM_key," +
+                            "Airport," +
+                            "Type," +
+                            "Coordinates," +
+                            "Altitude," +
+                            "Runway," +
+                            "Effective_Time," +
+                            "Created," +
+                            "Source " +
+                            "FROM notams " +
+                            "WHERE Airport = '" +airportCode+ "'");
             while(rs.next()){
                 for(int i = 1; i < 9; i++) {
-                    toreturn = toreturn + rs.getString(i) + "$";
+                    toReturn = toReturn + rs.getString(i) + "$";
                 }
-                toreturn = toreturn + "@";
+                toReturn = toReturn + "@";
             }
         } catch(SQLException e) {
             e.printStackTrace();
         }
-        return toreturn;
+        return toReturn;
     }
     /**
      * Passes in a single airport code input by a user,
@@ -176,15 +202,17 @@ public class Database_Layout_Manager extends Database_Connection {
      * Lat and lng property:value mapping is formatted
      * into a JSON string, to be consumed by our frontend code using
      * JSON.parse(JSON_String). The JSON.parse method is inside of
-     * the function invoking a method in our rest controller.
+     * the frontend function invoking the corresponding postmapping method
+     * in our rest controller.
      *
      * The function invoking the request handler in our rest api,
      * invokes that request handler with a call to http post which
      * includes parameters corresponding to the postmapping and
      * body request tags of that http-post request handler.
      *
-     * @param airportCode
-     * @return coordinates in a JSON-stringified format
+     * @param airportCode entered by user to query corresponding
+     *                    notam entry data.
+     * @return String geo-coordinates formatted as a JSON string.
      */
     public String getAirportCoordinates(String airportCode){
         try {
@@ -198,10 +226,10 @@ public class Database_Layout_Manager extends Database_Connection {
                             "Runway," +
                             "Effective_Time," +
                             "Created," +
-                            "Source" +
-                    " FROM notams WHERE Airport = '" +airportCode+ "'");
+                            "Source " +
+                            "FROM notams " +
+                            "WHERE Airport = '" +airportCode+ "'");
             if (rs.next()) {
-                // return rs.getString(4);
                 ObjectMapper objectMapper = new ObjectMapper();
                 Coords coords = new Coords(null, null);
                 coords.setLat(33.3333);
@@ -225,13 +253,14 @@ public class Database_Layout_Manager extends Database_Connection {
     }
 
     /**
+     * Returns the airport coordinates of all notam data entries in db.
      *
      * @param airportCodes array of airportCodes for all notam entries.
      * @return ArrayList<Object> of all notam airport codes,
-     * including duplicate airport code associated instances.
+     * including duplicate-airport-code-associated instances.
      * (i.e., notam having the same airport code as a different
      * notam in our database. Each notam has a unique key
-     * for identification in our db, in the form of a notam key.
+     * for identification in our db, in the format of a notam key-as-string.
      */
     public ArrayList<Object> getAllAirportCoordinates(Object[] airportCodes) {
         ArrayList<Object> airportCodeList = new ArrayList<>();
@@ -249,8 +278,8 @@ public class Database_Layout_Manager extends Database_Connection {
                                 "Runway," +
                                 "Effective_Time," +
                                 "Created," +
-                                "Source" +
-                                " FROM notams WHERE Airport = '" + airportCodes[++j] + "'");
+                                "Source FROM notams " +
+                                "WHERE Airport = '" + airportCodes[++j] + "'");
                 while (rs.next()) {
                     airportCodeList.add(rs.getString(4));
                 }
@@ -263,7 +292,21 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    public NotamModel testGetEntry(String airportCode){
+    /**
+     * Retrieves all column values of a queried notam entry,
+     * with search conducted by airport code.
+     * If the airport code entered by a user has multiple
+     * associated notam entries, the first row of column data found
+     * to match the entered airport code is returned to the frontend
+     * for rendering in our ui.
+     *
+     * @param airportCode string value entered by user
+     *                    to query matching notam instances
+     *                    in our database.
+     * @return NotamModel the first row of column data found
+     * to match the entered airportCode.
+     */
+    public NotamModel getEntry(String airportCode){
         try {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
@@ -275,12 +318,20 @@ public class Database_Layout_Manager extends Database_Connection {
                             "Runway," +
                             "Effective_Time," +
                             "Created," +
-                            "Source" +
-                            " FROM notams WHERE Airport = '" +airportCode+ "'");
+                            "Source " +
+                            "FROM notams " +
+                            "WHERE Airport = '" + airportCode + "'");
             if(rs.next()) {
-                return new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getString(9));
+                return new NotamModel(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -288,46 +339,127 @@ public class Database_Layout_Manager extends Database_Connection {
         return null;
     }
 
-    public Object[] testGetMultipleEntries(String airportCode) {
+    /**
+     *
+     * Returns data values of all notam entries matching
+     * a user's input airport code.
+     *
+     * @param airportCode string value entered by user
+     *                    to query matching notam instances
+     *                    in our database.
+     * @return Object[] an array of notam object model db
+     * instances matching a user's input airportCode.
+     */
+    public Object[] getMultipleEntries(String airportCode) {
         try {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams WHERE Airport = '" +airportCode+ "'");
-            ArrayList<NotamModel> multipleArrayList = new ArrayList<NotamModel>();
-            while(rs.next())
-                multipleArrayList.add(new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getString(9)));
-            return multipleArrayList.toArray();
+            ResultSet rs = st.executeQuery(
+                    "SELECT NOTAM_key," +
+                            "Airport," +
+                            "Type," +
+                            "Coordinates," +
+                            "Altitude," +
+                            "Runway," +
+                            "Effective_Time," +
+                            "Created," +
+                            "Source " +
+                            "FROM notams " +
+                            "WHERE Airport = '" + airportCode + "'");
+            ArrayList<NotamModel> multipleArrayList
+                    = new ArrayList<>();
+            return getNextMatchingEntry(rs, multipleArrayList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    /**
+     *
+     * Returns all rows of notam data entry values in our db.
+     *
+     * @return Object[] all rows of notam data entry values in our db.
+     */
     public Object[] getAllNotams() {
         try {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NOTAM_key,Airport,Type,Coordinates,Altitude,Runway,Effective_Time,Created,Source" +
-                    " FROM notams ");
-            ArrayList<NotamModel> multipleArrayList = new ArrayList<NotamModel>();
-            while(rs.next())
-                multipleArrayList.add(new NotamModel(rs.getString(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4), rs.getString(5), rs.getString(6),
-                        rs.getString(7), rs.getString(8), rs.getString(9)));
-            return multipleArrayList.toArray();
+            ResultSet rs = st.executeQuery(
+                    "SELECT NOTAM_key," +
+                            "Airport," +
+                            "Type," +
+                            "Coordinates," +
+                            "Altitude," +
+                            "Runway," +
+                            "Effective_Time," +
+                            "Created," +
+                            "Source " +
+                            "FROM notams ");
+            ArrayList<NotamModel> multipleArrayList
+                    = new ArrayList<>();
+            return getNextMatchingEntry(rs, multipleArrayList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public String testGetRaw(String key){
-        try {
+    /**
+     *
+     * Private helper method.
+     *
+     * @param rs iterable ResultSet of notam data.
+     * @param multArrayList array list which has notam entry data
+     *                      added to it upon each applicable
+     *                      iterative pass of the
+     *                      while loop below (applicable
+     *                      in cases where the airport code
+     *                      entered by the user matches the
+     *                      airport code in a row of entry data
+     *                      in our db, and applicable in cases
+     *                      where the queried data intentionally
+     *                      includes all notam entries in the db,
+     *                      e.g. getAllNotams()).
+     * @return Object[] cumulative NotamModel instances
+     * resulting from a user's search query.
+     * @throws SQLException if one is thrown by a method invoking this helper.
+     */
+    public Object[] getNextMatchingEntry(
+            ResultSet rs,
+            ArrayList<NotamModel> multArrayList) throws SQLException {
+        while(rs.next()) {
+            multArrayList.add(
+                    new NotamModel(
+                            rs.getString(1),
+                            rs.getString(2),
+                            rs.getString(3),
+                            rs.getString(4),
+                            rs.getString(5),
+                            rs.getString(6),
+                            rs.getString(7),
+                            rs.getString(8),
+                            rs.getString(9)));
+        }
+        return multArrayList.toArray();
+    }
 
+    /**
+     *
+     * Method used for rendering notam data for display to a user, when that
+     * user mouseclicks a notam key's value.
+     *
+     * @param key unique notam key corresponding with a single notam entry
+     * @return String concatenation of notam data-turned-to-string
+     * to render for display when a user mouseclicks
+     * the notam key value (value in first column) of any row of notam
+     * data previously returned upon that user's submitted search query.
+     */
+    public String getRawNotamData(String key){
+        try {
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT raw_notam" +
-                    " FROM notams WHERE NOTAM_key = '" +key+ "'");
+            ResultSet rs = st.executeQuery(
+                    "SELECT raw_notam " +
+                            "FROM notams " +
+                            "WHERE NOTAM_key = '" +key+ "'");
             if(rs.next())
                 return rs.getString(1);
         } catch (SQLException e) {
