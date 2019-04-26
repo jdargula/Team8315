@@ -1,6 +1,13 @@
 package com.example.notam;
 
-public class Coords {
+/**
+ * Coords class dedicated to getter
+ * setter methods for notam coordinates
+ * in database.
+ *
+ * @author Team JIE8315 - Notam Web Application - Project Implementation
+ */
+class Coords {
     private Double lat;
     private Double lng;
     Coords(Double lat, Double lng) {
